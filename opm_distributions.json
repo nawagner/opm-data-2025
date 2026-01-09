@@ -1,0 +1,138 @@
+{
+  "employment": {
+    "age_bracket": {
+      "40-44": 71513,
+      "45-49": 65635,
+      "50-54": 64510,
+      "35-39": 63413,
+      "55-59": 62365,
+      "30-34": 50925,
+      "60-64": 45483,
+      "25-29": 35902,
+      "65 OR MORE": 25616,
+      "20-24": 14040,
+      "LESS THAN 20": 598
+    },
+    "work_schedule": {
+      "FULL-TIME": 477117,
+      "PART-TIME": 8812,
+      "INTERMITTENT": 7448,
+      "FULL-TIME SEASONAL": 5155,
+      "INTERMITTENT SEASONAL": 974,
+      "PART-TIME SEASONAL": 403,
+      "PART-TIME JOB SHARER": 47,
+      "A SCHEDULE REQUIRED WHEN AN EMPLOYEE HAS ELECTED PHASED EMPLOYMENT/PHASED RETIREMENT STATUS AND HAS A LESS THA": 40,
+      "INVALID": 4
+    },
+    "supervisory_status": {
+      "ALL OTHER POSITIONS": 419834,
+      "SUPERVISOR OR MANAGER": 58269,
+      "SUPERVISOR (CSRA)": 7778,
+      "LEADER": 6144,
+      "TEAM LEADER": 4429,
+      "MANAGEMENT OFFICIAL (CSRA)": 3537,
+      "INVALID": 9
+    },
+    "stem_occupation": {
+      "ALL OTHER OCCUPATIONS": 364089,
+      "STEM OCCUPATIONS": 92087,
+      "HEALTH OCCUPATIONS": 43524,
+      "UNSPECIFIED": 300
+    },
+    "top_agencies": {
+      "DEPARTMENT OF VETERANS AFFAIRS": 83614,
+      "DEPARTMENT OF HOMELAND SECURITY": 73367,
+      "DEPARTMENT OF THE AIR FORCE": 56153,
+      "DEPARTMENT OF THE ARMY": 45019,
+      "DEPARTMENT OF THE NAVY": 39259,
+      "DEPARTMENT OF DEFENSE": 32265,
+      "DEPARTMENT OF AGRICULTURE": 28937,
+      "DEPARTMENT OF HEALTH AND HUMAN SERVICES": 27297,
+      "DEPARTMENT OF INTERIOR": 20265,
+      "DEPARTMENT OF TREASURY": 15990
+    },
+    "top_states": {
+      "REDACTED": 238855,
+      "MARYLAND": 28826,
+      "DISTRICT OF COLUMBIA": 28383,
+      "GEORGIA": 23816,
+      "ILLINOIS": 17336,
+      "OHIO": 13504,
+      "MICHIGAN": 11874,
+      "VIRGINIA": 11388,
+      "TEXAS": 11263,
+      "CALIFORNIA": 9963
+    }
+  },
+  "accessions": {
+    "accession_category": {
+      "NEW HIRE - COMPETITIVE SERVICE APPOINTMENT": 12000,
+      "NEW HIRE - EXCEPTED SERVICE APPOINTMENT": 9137,
+      "TRANSFER IN - INDIVIDUAL TRANSFER": 1301,
+      "NEW HIRE - SENIOR EXECUTIVE SERVICE (SES) APPT": 243
+    },
+    "age_bracket": {
+      "25-29": 3625,
+      "30-34": 3575,
+      "35-39": 3219,
+      "40-44": 2878,
+      "20-24": 2710,
+      "45-49": 2222,
+      "50-54": 1827,
+      "55-59": 1298,
+      "60-64": 664,
+      "65 OR MORE": 416,
+      "LESS THAN 20": 247
+    },
+    "top_agencies": {
+      "DEPARTMENT OF HOMELAND SECURITY": 2947,
+      "DEPARTMENT OF VETERANS AFFAIRS": 2313,
+      "DEPARTMENT OF THE ARMY": 2298,
+      "DEPARTMENT OF DEFENSE": 1944,
+      "DEPARTMENT OF THE NAVY": 1866,
+      "DEPARTMENT OF TREASURY": 1795,
+      "DEPARTMENT OF THE AIR FORCE": 1751,
+      "DEPARTMENT OF JUSTICE": 1056,
+      "DEPARTMENT OF HEALTH AND HUMAN SERVICES": 950,
+      "DEPARTMENT OF INTERIOR": 899
+    }
+  },
+  "separations": {
+    "separation_category": {
+      "QUIT": 9148,
+      "RETIREMENT - VOLUNTARY": 6549,
+      "TRANSFER OUT - INDIVIDUAL TRANSFER": 3032,
+      "TERMINATION (EXPIRED APPT/OTHER)": 1858,
+      "OTHER SEPARATION": 1377,
+      "RETIREMENT - OTHER": 303,
+      "RETIREMENT - EARLY OUT": 24,
+      "TRANSFER OUT - MASS TRANSFER": 20,
+      "REDUCTION IN FORCE (RIF)": 1
+    },
+    "age_bracket": {
+      "65 OR MORE": 3774,
+      "60-64": 3438,
+      "55-59": 2258,
+      "35-39": 2251,
+      "40-44": 2163,
+      "30-34": 2099,
+      "25-29": 1792,
+      "50-54": 1711,
+      "45-49": 1670,
+      "20-24": 1093,
+      "LESS THAN 20": 63
+    },
+    "top_agencies": {
+      "DEPARTMENT OF VETERANS AFFAIRS": 3032,
+      "DEPARTMENT OF THE ARMY": 2125,
+      "DEPARTMENT OF DEFENSE": 1777,
+      "DEPARTMENT OF THE AIR FORCE": 1738,
+      "DEPARTMENT OF HOMELAND SECURITY": 1678,
+      "DEPARTMENT OF THE NAVY": 1590,
+      "DEPARTMENT OF TREASURY": 1230,
+      "DEPARTMENT OF JUSTICE": 1049,
+      "DEPARTMENT OF AGRICULTURE": 1000,
+      "DEPARTMENT OF HEALTH AND HUMAN SERVICES": 898
+    }
+  }
+}
