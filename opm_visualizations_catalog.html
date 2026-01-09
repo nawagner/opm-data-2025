@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPM Federal Workforce Data - Visualization Catalog</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e8e8e8;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #8892b0;
+            font-size: 1.1rem;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #4facfe;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #8892b0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .category {
+            margin-bottom: 3rem;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid rgba(79, 172, 254, 0.3);
+        }
+
+        .category-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .category-count {
+            background: rgba(79, 172, 254, 0.2);
+            color: #4facfe;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-left: auto;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-color), transparent);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(79, 172, 254, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 1rem;
+            padding-right: 2rem;
+        }
+
+        .card-section {
+            margin-bottom: 1rem;
+        }
+
+        .card-section-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #4facfe;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+        }
+
+        .variables-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .variable-tag {
+            background: rgba(79, 172, 254, 0.1);
+            border: 1px solid rgba(79, 172, 254, 0.2);
+            color: #a8d8ff;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+        }
+
+        .questions-list {
+            color: #b0b0b0;
+            font-size: 0.9rem;
+        }
+
+        .questions-list li {
+            margin-bottom: 0.4rem;
+            padding-left: 0.5rem;
+            border-left: 2px solid rgba(79, 172, 254, 0.3);
+        }
+
+        .card-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #4facfe;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .card-link:hover {
+            color: #00f2fe;
+            gap: 0.75rem;
+        }
+
+        .card-link svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Category colors */
+        .category-workforce-size .category-icon { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .category-workforce-size .card { --accent-color: #667eea; }
+
+        .category-workforce-changes .category-icon { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .category-workforce-changes .card { --accent-color: #f093fb; }
+
+        .category-compensation .category-icon { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .category-compensation .card { --accent-color: #4facfe; }
+
+        .category-recruitment .category-icon { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+        .category-recruitment .card { --accent-color: #43e97b; }
+
+        .category-demographics .category-icon { background: linear-gradient(135deg, #fa709a, #fee140); }
+        .category-demographics .card { --accent-color: #fa709a; }
+
+        .category-location .category-icon { background: linear-gradient(135deg, #a8edea, #fed6e3); }
+        .category-location .card { --accent-color: #a8edea; }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #8892b0;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 2rem;
+        }
+
+        .footer a {
+            color: #4facfe;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.75rem;
+            }
+
+            .stats-bar {
+                flex-wrap: wrap;
+                gap: 1.5rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .category-header {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>OPM Federal Workforce Data</h1>
+        <p>Interactive Visualization Catalog</p>
+    </header>
+
+    <div class="stats-bar">
+        <div class="stat">
+            <div class="stat-number">22</div>
+            <div class="stat-label">Visualizations</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">6</div>
+            <div class="stat-label">Categories</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">40+</div>
+            <div class="stat-label">Data Variables</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Workforce Size & Composition -->
+        <section class="category category-workforce-size">
+            <div class="category-header">
+                <div class="category-icon">📊</div>
+                <h2 class="category-title">Workforce Size & Composition</h2>
+                <span class="category-count">4 visualizations</span>
+            </div>
+            <div class="cards-grid">
+                <article class="card">
+                    <h3 class="card-title">The Federal Civilian Workforce Over Time</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Subagency</span>
+                            <span class="variable-tag">Fiscal Year</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>How has the total federal workforce size changed over the past decade?</li>
+                            <li>What is the trend in employee count for a specific agency?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/workforce-size-and-composition" target="_blank" class="card-link">
+                        View Visualization
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Federal Workforce by Agency and Occupation</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Subagency</span>
+                            <span class="variable-tag">Occupational Series</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>Which agencies employ the most IT specialists?</li>
+                            <li>How does workforce distribution vary across different occupational series?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/workforce-size-and-composition" target="_blank" class="card-link">
+                        View Visualization
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Federal Workforce by Appointment Type</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Service Type</span>
+                            <span class="variable-tag">Permanent/Temporary</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What percentage of federal employees are in permanent vs. temporary positions?</li>
+                            <li>Which agencies rely most heavily on non-permanent staff?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/workforce-size-and-composition" target="_blank" class="card-link">
+                        View Visualization
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Federal Workforce by Bargaining Unit Status</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Bargaining Unit Eligibility</span>
+                            <span class="variable-tag">Date Range</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What proportion of employees are union-eligible but not in a bargaining unit?</li>
+                            <li>How has bargaining unit membership trended over time?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/workforce-size-and-composition" target="_blank" class="card-link">
+                        View Visualization
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </article>
+            </div>
+        </section>
+
+        <!-- Workforce Changes -->
+        <section class="category category-workforce-changes">
+            <div class="category-header">
+                <div class="category-icon">📈</div>
+                <h2 class="category-title">Workforce Changes</h2>
+                <span class="category-count">4 visualizations</span>
+            </div>
+            <div class="cards-grid">
+                <article class="card">
+                    <h3 class="card-title">Federal Workforce Changes Over Time</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Subagency</span>
+                            <span class="variable-tag">Fiscal Year</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What is the net change in federal employment year over year?</li>
+                            <li>During which fiscal years did the workforce grow or shrink the most?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/workforce-changes" target="_blank" class="card-link">
+                        View Visualization
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Federal Workforce Changes by Agency</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Subagency</span>
+                            <span class="variable-tag">Fiscal Year</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>Which agencies experienced the largest workforce changes?</li>
+                            <li>How do workforce changes compare across departments?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/workforce-changes" target="_blank" class="card-link">
+                        View Visualization
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Separations and Accessions Since January 20, 2025</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Occupational Series</span>
+                            <span class="variable-tag">Action Types</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What is the net hiring vs. separation balance since the new administration?</li>
+                            <li>Which occupational series have seen the most separations?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/workforce-changes" target="_blank" class="card-link">
+                        View Visualization
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Separations and Accessions Over Time</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Personnel Action Type</span>
+                            <span class="variable-tag">Fiscal Year</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What are the historical trends in new hires vs. retirements?</li>
+                            <li>When do agencies typically see the highest turnover?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/workforce-changes" target="_blank" class="card-link">
+                        View Visualization
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </article>
+            </div>
+        </section>
+
+        <!-- Compensation, Performance & Leave -->
+        <section class="category category-compensation">
+            <div class="category-header">
+                <div class="category-icon">💰</div>
+                <h2 class="category-title">Compensation, Performance & Leave</h2>
+                <span class="category-count">4 visualizations</span>
+            </div>
+            <div class="cards-grid">
+                <article class="card">
+                    <h3 class="card-title">Federal Workforce by Pay Plan and Grade</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Subagency</span>
+                            <span class="variable-tag">Fiscal Year</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What is the distribution of employees across GS grades?</li>
+                            <li>How does pay grade composition differ by agency?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/compensation-performance-leave" target="_blank" class="card-link">
+                        View Visualization
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Salary Distribution by Agency and Series</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Occupational Series</span>
+                            <span class="variable-tag">Fiscal Year</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What is the average salary for a specific occupational series?</li>
+                            <li>Which agencies pay the highest salaries for comparable positions?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/compensation-performance-leave" target="_blank" class="card-link">
+                        View Visualization
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Performance Ratings Distribution</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Rating Pattern</span>
+                            <span class="variable-tag">Fiscal Year</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What percentage of employees receive the highest performance ratings?</li>
+                            <li>How do performance ratings vary across departments?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/compensation-performance-leave" target="_blank" class="card-link">
+                        View Visualization
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Use of Administrative Leave</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Admin Leave Type</span>
+                            <span class="variable-tag">Pay Period Date Range</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>How much administrative leave is being used for investigations?</li>
+                            <li>What are the trends in administrative leave usage over time?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/compensation-performance-leave" target="_blank" class="card-link">
+                        View Visualization
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </article>
+            </div>
+        </section>
+
+        <!-- Federal Recruitment -->
+        <section class="category category-recruitment">
+            <div class="category-header">
+                <div class="category-icon">🎯</div>
+                <h2 class="category-title">Federal Recruitment</h2>
+                <span class="category-count">3 visualizations</span>
+            </div>
+            <div class="cards-grid">
+                <article class="card">
+                    <h3 class="card-title">Current Job Announcements by Agency</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Occupational Series</span>
+                            <span class="variable-tag">Hiring Path</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>Which agencies currently have the most open positions?</li>
+                            <li>What types of jobs are federal agencies actively recruiting for?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/federal-recruitment" target="_blank" class="card-link">
+                        View Visualization
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Current Job Announcements by Location</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Occupational Series</span>
+                            <span class="variable-tag">Location</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>Where are federal jobs currently available geographically?</li>
+                            <li>Which regions have the most federal hiring opportunities?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/federal-recruitment" target="_blank" class="card-link">
+                        View Visualization
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Job Announcements Over Time</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Occupational Series</span>
+                            <span class="variable-tag">Fiscal Year Range</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>How has federal hiring activity changed over time?</li>
+                            <li>Is the government expanding or contracting recruitment efforts?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/federal-recruitment" target="_blank" class="card-link">
+                        View Visualization
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </article>
+            </div>
+        </section>
+
+        <!-- Demographics -->
+        <section class="category category-demographics">
+            <div class="category-header">
+                <div class="category-icon">👥</div>
+                <h2 class="category-title">Demographics</h2>
+                <span class="category-count">4 visualizations</span>
+            </div>
+            <div class="cards-grid">
+                <article class="card">
+                    <h3 class="card-title">Employees by Age</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Subagency</span>
+                            <span class="variable-tag">Age Groups</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What is the age distribution of the federal workforce?</li>
+                            <li>Which agencies have the youngest or oldest workforce?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/demographics" target="_blank" class="card-link">
+                        View Visualization
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Employees by Retirement Eligibility</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Occupational Series</span>
+                            <span class="variable-tag">Eligibility Timeframe</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What percentage of employees are currently eligible to retire?</li>
+                            <li>How many employees will become retirement-eligible in the next decade?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/demographics" target="_blank" class="card-link">
+                        View Visualization
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Employees by Veteran Status</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Subagency</span>
+                            <span class="variable-tag">Veteran Status</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What proportion of federal employees are veterans?</li>
+                            <li>Which agencies have the highest veteran employment rates?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/demographics" target="_blank" class="card-link">
+                        View Visualization
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Employees by Education Level</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Occupational Series</span>
+                            <span class="variable-tag">Education Level</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What is the educational attainment profile of the federal workforce?</li>
+                            <li>Which occupations require the highest education levels?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/demographics" target="_blank" class="card-link">
+                        View Visualization
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </article>
+            </div>
+        </section>
+
+        <!-- Location -->
+        <section class="category category-location">
+            <div class="category-header">
+                <div class="category-icon">🗺️</div>
+                <h2 class="category-title">Location</h2>
+                <span class="category-count">3 visualizations</span>
+            </div>
+            <div class="cards-grid">
+                <article class="card">
+                    <h3 class="card-title">Distribution of Employees by Location</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Subagency</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>Where are federal employees located geographically?</li>
+                            <li>What is the concentration of federal workers by state?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/location" target="_blank" class="card-link">
+                        View Visualization
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Location by Agency and State</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">State</span>
+                            <span class="variable-tag">Fiscal Year</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>Which states have the largest presence of a specific agency?</li>
+                            <li>How has geographic distribution of employees changed over time?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/location" target="_blank" class="card-link">
+                        View Visualization
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Telework and Remote Work Over Time</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Hours Type</span>
+                            <span class="variable-tag">Pay Period Date Range</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>How have telework patterns changed since return-to-office directives?</li>
+                            <li>What percentage of work hours are performed remotely?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/location" target="_blank" class="card-link">
+                        View Visualization
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </article>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p>Data source: <a href="https://data.opm.gov" target="_blank">OPM Federal Workforce Data (data.opm.gov)</a></p>
+        <p>Catalog generated January 2026</p>
+    </footer>
+</body>
+</html>
