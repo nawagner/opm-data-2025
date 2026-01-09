@@ -35,5 +35,3 @@ xdg-open opm_data_summary.html  # Linux
 ## Files
 
 - **opm_data_summary.html** - Main portal with three tabs: (1) Visualizations covering workforce size & composition, workforce changes, compensation/performance/leave, demographics, location, and federal recruitment; (2) Data Catalog with raw data schemas for employment, accessions, and separations; (3) Unused Variables analysis
-- **opm_data_catalog.html** - Detailed data catalog describing available datasets and their schemas
-- **opm_visualizations_catalog.html** - Catalog of available visualizations with descriptions
