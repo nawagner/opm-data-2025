@@ -7,13 +7,17 @@ Built with [Claude Code](https://claude.ai/code).
 
 The data visualizations are contained in self-contained HTML files that can be opened directly in any web browser.
 
-### Option 1: Download from GitHub
+### Option 1: View Online (GitHub Pages)
+
+Visit the live site at: **https://nawagner.github.io/opm-data-2025/**
+
+### Option 2: Download from GitHub
 
 1. Navigate to [opm_data_summary.html](opm_data_summary.html) in the repository
 2. Click the **Download** button (or right-click and select "Save as...")
 3. Open the downloaded file in your web browser (Chrome, Firefox, Safari, or Edge)
 
-### Option 2: Clone the Repository
+### Option 3: Clone the Repository
 
 ```bash
 git clone https://github.com/nawagner/opm-data-2025.git
@@ -25,7 +29,7 @@ start opm_data_summary.html  # Windows
 xdg-open opm_data_summary.html  # Linux
 ```
 
-### Option 3: Download ZIP
+### Option 4: Download ZIP
 
 1. Click the green **Code** button on the repository page
 2. Select **Download ZIP**
