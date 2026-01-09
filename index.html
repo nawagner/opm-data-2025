@@ -1,0 +1,2482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPM Federal Workforce Data Portal</title>
+    <style>
+        :root {
+            --navy: #1a365d;
+            --navy-light: #2c5282;
+            --gold: #c9a227;
+            --bg: #0f172a;
+            --bg-light: #1e293b;
+            --card-bg: #1e293b;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --accent-blue: #3b82f6;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --accent-purple: #a855f7;
+            --accent-orange: #f97316;
+            --accent-cyan: #06b6d4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .site-header {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 3px solid var(--gold);
+        }
+
+        .site-header h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .site-header p {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--navy);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            background: var(--bg-light);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .tab-nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 0;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 1rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab-btn:hover {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-btn.active {
+            color: var(--accent-blue);
+            border-bottom-color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .tab-btn .icon {
+            font-size: 1.1rem;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Page Container */
+        .page-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Stats Overview */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.25rem;
+            border: 1px solid var(--border);
+        }
+
+        .stat-card h3 {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
+
+        .stat-card .detail {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0 1.5rem 0;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .section-header .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .section-header h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .section-header .count {
+            margin-left: auto;
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-blue);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .card:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .card-section {
+            margin-bottom: 1rem;
+        }
+
+        .card-section-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent-blue);
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+        }
+
+        .variables-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .variable-tag {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #93c5fd;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+        }
+
+        .questions-list {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            list-style: none;
+        }
+
+        .questions-list li {
+            margin-bottom: 0.4rem;
+            padding-left: 0.75rem;
+            border-left: 2px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .card-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .card-link:hover {
+            color: var(--accent-cyan);
+        }
+
+        /* Data Catalog Specific Styles */
+        .data-type-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .data-section-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-section-header.employment { background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 100%); }
+        .data-section-header.accessions { background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.05) 100%); }
+        .data-section-header.separations { background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.05) 100%); }
+
+        .data-section-header h2 {
+            font-size: 1.4rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .data-section-header .icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .data-section-header.employment .icon { background: var(--accent-blue); color: white; }
+        .data-section-header.accessions .icon { background: var(--accent-green); color: white; }
+        .data-section-header.separations .icon { background: var(--accent-red); color: white; }
+
+        .data-section-header p {
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .data-section-content {
+            padding: 1.5rem 2rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .info-item label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .info-item .value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+        }
+
+        /* Tables */
+        .columns-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .columns-table th {
+            background: var(--navy);
+            color: white;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 60px;
+        }
+
+        .columns-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        .columns-table tr:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .columns-table .col-name {
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            white-space: nowrap;
+        }
+
+        .dtype-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-family: monospace;
+        }
+
+        .dtype-object { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; }
+        .dtype-int64 { background: rgba(34, 197, 94, 0.2); color: #86efac; }
+        .dtype-float64 { background: rgba(249, 115, 22, 0.2); color: #fdba74; }
+
+        .values-preview code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.15rem 0.35rem;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            margin: 0.1rem;
+            display: inline-block;
+            color: #e2e8f0;
+        }
+
+        /* Alert boxes */
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .alert-warning {
+            background: rgba(249, 115, 22, 0.15);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            color: #fdba74;
+        }
+
+        .alert-info {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #93c5fd;
+        }
+
+        .alert h4 {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Bar Charts */
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .bar-label {
+            width: 160px;
+            font-size: 0.8rem;
+            text-align: right;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-muted);
+        }
+
+        .bar-container {
+            flex: 1;
+            height: 24px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding-left: 0.5rem;
+            font-size: 0.7rem;
+            color: white;
+            font-weight: 600;
+            min-width: fit-content;
+        }
+
+        .bar-fill.blue { background: var(--accent-blue); }
+        .bar-fill.green { background: var(--accent-green); }
+        .bar-fill.red { background: var(--accent-red); }
+        .bar-fill.purple { background: var(--accent-purple); }
+        .bar-fill.orange { background: var(--accent-orange); }
+
+        .bar-value {
+            width: 60px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: right;
+            color: var(--text-muted);
+        }
+
+        /* Unused Variables Section */
+        .unused-var-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .unused-var-card h3 {
+            font-size: 1rem;
+            color: white;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .unused-var-card h3 code {
+            background: rgba(168, 85, 247, 0.2);
+            color: #c4b5fd;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .unused-var-card .description {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .unused-var-card .sample-values {
+            margin-top: 0.75rem;
+        }
+
+        .unused-var-card .sample-values h4 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .potential-uses {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .potential-uses h4 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--accent-purple);
+            margin-bottom: 0.5rem;
+        }
+
+        .potential-uses ul {
+            list-style: none;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .potential-uses li {
+            padding-left: 1rem;
+            position: relative;
+            margin-bottom: 0.25rem;
+        }
+
+        .potential-uses li::before {
+            content: ">";
+            position: absolute;
+            left: 0;
+            color: var(--accent-purple);
+        }
+
+        /* Data Catalog Full Styles (matching original opm_data_catalog.html) */
+        .data-catalog-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .data-catalog-container .overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .data-catalog-container .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--navy);
+        }
+
+        .data-catalog-container .stat-card.employment { border-left-color: var(--accent-blue); }
+        .data-catalog-container .stat-card.accessions { border-left-color: var(--accent-green); }
+        .data-catalog-container .stat-card.separations { border-left-color: var(--accent-red); }
+
+        .data-type-section-full {
+            background: var(--card-bg);
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .section-header-full {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-header-full.employment { background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 100%); }
+        .section-header-full.accessions { background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.05) 100%); }
+        .section-header-full.separations { background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.05) 100%); }
+
+        .section-header-full h2 {
+            font-size: 1.5rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .icon-full {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .section-header-full.employment .icon-full { background: var(--accent-blue); color: white; }
+        .section-header-full.accessions .icon-full { background: var(--accent-green); color: white; }
+        .section-header-full.separations .icon-full { background: var(--accent-red); color: white; }
+
+        .section-header-full p {
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .section-content-full {
+            padding: 2rem;
+        }
+
+        .info-grid-full {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-item-full {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .info-item-full label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .info-item-full .value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+        }
+
+        .section-subheader {
+            font-size: 1.1rem;
+            color: white;
+            margin: 1.5rem 0 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .special-fields {
+            background: rgba(249, 115, 22, 0.15);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .special-fields h4 {
+            color: #fdba74;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .special-fields p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .bar-chart-full {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .bar-row-full {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .bar-label-full {
+            width: 180px;
+            font-size: 0.85rem;
+            text-align: right;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-muted);
+        }
+
+        .bar-container-full {
+            flex: 1;
+            height: 24px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .bar-fill-full {
+            height: 100%;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding-left: 0.5rem;
+            font-size: 0.75rem;
+            color: white;
+            font-weight: 600;
+            min-width: fit-content;
+        }
+
+        .bar-fill-full.employment { background: var(--accent-blue); }
+        .bar-fill-full.accessions { background: var(--accent-green); }
+        .bar-fill-full.separations { background: var(--accent-red); }
+
+        .bar-value-full {
+            width: 80px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: right;
+            color: var(--text-muted);
+        }
+
+        .columns-table-full {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .columns-table-full th {
+            background: var(--navy);
+            color: white;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 60px;
+        }
+
+        .columns-table-full td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        .columns-table-full tr:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .col-name-full {
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            white-space: nowrap;
+        }
+
+        .dtype-badge-full {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-family: monospace;
+        }
+
+        .dtype-object-full { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; }
+        .dtype-int64-full { background: rgba(34, 197, 94, 0.2); color: #86efac; }
+        .dtype-float64-full { background: rgba(249, 115, 22, 0.2); color: #fdba74; }
+
+        .null-low-full { color: #22c55e; }
+        .null-med-full { color: #eab308; }
+        .null-high-full { color: #ef4444; }
+
+        .values-preview-full {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            max-width: 300px;
+        }
+
+        .values-preview-full code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            margin: 0.1rem;
+            display: inline-block;
+            color: #e2e8f0;
+        }
+
+        .notes-full {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .notes-full h4 {
+            color: var(--accent-blue);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .notes-full ul {
+            padding-left: 1.25rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .notes-full li {
+            margin: 0.25rem 0;
+        }
+
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .site-header h1 { font-size: 1.5rem; }
+            .tab-btn { padding: 0.75rem 1rem; font-size: 0.85rem; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .bar-label { width: 100px; }
+            .columns-table { font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <h1>OPM Federal Workforce Data Portal</h1>
+        <p>Enterprise Human Resources Integration (EHRI) datasets and visualization catalog for federal workforce analysis</p>
+        <span class="badge">January - November 2025</span>
+    </header>
+
+    <nav class="tab-nav">
+        <div class="tab-nav-inner">
+            <button class="tab-btn active" onclick="showTab('visualizations')">
+                <span class="icon">📊</span>
+                Visualization Catalog
+            </button>
+            <button class="tab-btn" onclick="showTab('data-catalog')">
+                <span class="icon">📁</span>
+                Data Catalog
+            </button>
+            <button class="tab-btn" onclick="showTab('unused-variables')">
+                <span class="icon">🔍</span>
+                Additional Variables
+            </button>
+        </div>
+    </nav>
+
+    <!-- TAB 1: Visualization Catalog -->
+    <div id="visualizations" class="tab-content active">
+        <div class="page-container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Visualizations</h3>
+                    <div class="value">22</div>
+                    <div class="detail">Interactive dashboards</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Categories</h3>
+                    <div class="value">6</div>
+                    <div class="detail">Analysis themes</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Variables Used</h3>
+                    <div class="value">15+</div>
+                    <div class="detail">Data dimensions</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Data Source</h3>
+                    <div class="value">OPM</div>
+                    <div class="detail">data.opm.gov</div>
+                </div>
+            </div>
+
+            <!-- Workforce Size & Composition -->
+            <div class="section-header">
+                <div class="icon" style="background: #667eea;">📊</div>
+                <h2>Workforce Size & Composition</h2>
+                <span class="count">4 visualizations</span>
+            </div>
+            <div class="cards-grid">
+                <article class="card">
+                    <h3 class="card-title">The Federal Civilian Workforce Over Time</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Subagency</span>
+                            <span class="variable-tag">Fiscal Year</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>How has the total federal workforce size changed over the past decade?</li>
+                            <li>What is the trend in employee count for a specific agency?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/workforce-size-and-composition" target="_blank" class="card-link">View Visualization &rarr;</a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Federal Workforce by Agency and Occupation</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Subagency</span>
+                            <span class="variable-tag">Occupational Series</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>Which agencies employ the most IT specialists?</li>
+                            <li>How does workforce distribution vary across different occupational series?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/workforce-size-and-composition" target="_blank" class="card-link">View Visualization &rarr;</a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Federal Workforce by Appointment Type</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Service Type</span>
+                            <span class="variable-tag">Permanent/Temporary</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What percentage of federal employees are in permanent vs. temporary positions?</li>
+                            <li>Which agencies rely most heavily on non-permanent staff?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/workforce-size-and-composition" target="_blank" class="card-link">View Visualization &rarr;</a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Federal Workforce by Bargaining Unit Status</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Bargaining Unit Eligibility</span>
+                            <span class="variable-tag">Date Range</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What proportion of employees are union-eligible but not in a bargaining unit?</li>
+                            <li>How has bargaining unit membership trended over time?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/workforce-size-and-composition" target="_blank" class="card-link">View Visualization &rarr;</a>
+                </article>
+            </div>
+
+            <!-- Workforce Changes -->
+            <div class="section-header">
+                <div class="icon" style="background: #f093fb;">📈</div>
+                <h2>Workforce Changes</h2>
+                <span class="count">4 visualizations</span>
+            </div>
+            <div class="cards-grid">
+                <article class="card">
+                    <h3 class="card-title">Federal Workforce Changes Over Time</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Subagency</span>
+                            <span class="variable-tag">Fiscal Year</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What is the net change in federal employment year over year?</li>
+                            <li>During which fiscal years did the workforce grow or shrink the most?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/workforce-changes" target="_blank" class="card-link">View Visualization &rarr;</a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Separations and Accessions Since January 20, 2025</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Occupational Series</span>
+                            <span class="variable-tag">Action Types</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What is the net hiring vs. separation balance since the new administration?</li>
+                            <li>Which occupational series have seen the most separations?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/workforce-changes" target="_blank" class="card-link">View Visualization &rarr;</a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Separations and Accessions Over Time</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Personnel Action Type</span>
+                            <span class="variable-tag">Fiscal Year</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What are the historical trends in new hires vs. retirements?</li>
+                            <li>When do agencies typically see the highest turnover?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/workforce-changes" target="_blank" class="card-link">View Visualization &rarr;</a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Federal Workforce Changes by Agency</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Subagency</span>
+                            <span class="variable-tag">Fiscal Year</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>Which agencies experienced the largest workforce changes?</li>
+                            <li>How do workforce changes compare across departments?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/workforce-changes" target="_blank" class="card-link">View Visualization &rarr;</a>
+                </article>
+            </div>
+
+            <!-- Compensation -->
+            <div class="section-header">
+                <div class="icon" style="background: #4facfe;">💰</div>
+                <h2>Compensation, Performance & Leave</h2>
+                <span class="count">4 visualizations</span>
+            </div>
+            <div class="cards-grid">
+                <article class="card">
+                    <h3 class="card-title">Federal Workforce by Pay Plan and Grade</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Subagency</span>
+                            <span class="variable-tag">Fiscal Year</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What is the distribution of employees across GS grades?</li>
+                            <li>How does pay grade composition differ by agency?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/compensation-performance-leave" target="_blank" class="card-link">View Visualization &rarr;</a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Salary Distribution by Agency and Series</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Occupational Series</span>
+                            <span class="variable-tag">Fiscal Year</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What is the average salary for a specific occupational series?</li>
+                            <li>Which agencies pay the highest salaries for comparable positions?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/compensation-performance-leave" target="_blank" class="card-link">View Visualization &rarr;</a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Performance Ratings Distribution</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Rating Pattern</span>
+                            <span class="variable-tag">Fiscal Year</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What percentage of employees receive the highest performance ratings?</li>
+                            <li>How do performance ratings vary across departments?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/compensation-performance-leave" target="_blank" class="card-link">View Visualization &rarr;</a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Use of Administrative Leave</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Admin Leave Type</span>
+                            <span class="variable-tag">Pay Period Date Range</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>How much administrative leave is being used for investigations?</li>
+                            <li>What are the trends in administrative leave usage over time?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/compensation-performance-leave" target="_blank" class="card-link">View Visualization &rarr;</a>
+                </article>
+            </div>
+
+            <!-- Demographics -->
+            <div class="section-header">
+                <div class="icon" style="background: #fa709a;">👥</div>
+                <h2>Demographics</h2>
+                <span class="count">4 visualizations</span>
+            </div>
+            <div class="cards-grid">
+                <article class="card">
+                    <h3 class="card-title">Employees by Age</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Subagency</span>
+                            <span class="variable-tag">Age Groups</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What is the age distribution of the federal workforce?</li>
+                            <li>Which agencies have the youngest or oldest workforce?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/demographics" target="_blank" class="card-link">View Visualization &rarr;</a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Employees by Retirement Eligibility</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Occupational Series</span>
+                            <span class="variable-tag">Eligibility Timeframe</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What percentage of employees are currently eligible to retire?</li>
+                            <li>How many employees will become retirement-eligible in the next decade?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/demographics" target="_blank" class="card-link">View Visualization &rarr;</a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Employees by Veteran Status</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Subagency</span>
+                            <span class="variable-tag">Veteran Status</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What proportion of federal employees are veterans?</li>
+                            <li>Which agencies have the highest veteran employment rates?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/demographics" target="_blank" class="card-link">View Visualization &rarr;</a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Employees by Education Level</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Occupational Series</span>
+                            <span class="variable-tag">Education Level</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>What is the educational attainment profile of the federal workforce?</li>
+                            <li>Which occupations require the highest education levels?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/demographics" target="_blank" class="card-link">View Visualization &rarr;</a>
+                </article>
+            </div>
+
+            <!-- Location -->
+            <div class="section-header">
+                <div class="icon" style="background: #43e97b;">🗺️</div>
+                <h2>Location</h2>
+                <span class="count">3 visualizations</span>
+            </div>
+            <div class="cards-grid">
+                <article class="card">
+                    <h3 class="card-title">Distribution of Employees by Location</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Subagency</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>Where are federal employees located geographically?</li>
+                            <li>What is the concentration of federal workers by state?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/location" target="_blank" class="card-link">View Visualization &rarr;</a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Location by Agency and State</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">State</span>
+                            <span class="variable-tag">Fiscal Year</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>Which states have the largest presence of a specific agency?</li>
+                            <li>How has geographic distribution of employees changed over time?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/location" target="_blank" class="card-link">View Visualization &rarr;</a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Telework and Remote Work Over Time</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Hours Type</span>
+                            <span class="variable-tag">Pay Period Date Range</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>How have telework patterns changed since return-to-office directives?</li>
+                            <li>What percentage of work hours are performed remotely?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/location" target="_blank" class="card-link">View Visualization &rarr;</a>
+                </article>
+            </div>
+
+            <!-- Recruitment -->
+            <div class="section-header">
+                <div class="icon" style="background: #38f9d7;">🎯</div>
+                <h2>Federal Recruitment</h2>
+                <span class="count">3 visualizations</span>
+            </div>
+            <div class="cards-grid">
+                <article class="card">
+                    <h3 class="card-title">Current Job Announcements by Agency</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Occupational Series</span>
+                            <span class="variable-tag">Hiring Path</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>Which agencies currently have the most open positions?</li>
+                            <li>What types of jobs are federal agencies actively recruiting for?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/federal-recruitment" target="_blank" class="card-link">View Visualization &rarr;</a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Current Job Announcements by Location</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Occupational Series</span>
+                            <span class="variable-tag">Location</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>Where are federal jobs currently available geographically?</li>
+                            <li>Which regions have the most federal hiring opportunities?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/federal-recruitment" target="_blank" class="card-link">View Visualization &rarr;</a>
+                </article>
+
+                <article class="card">
+                    <h3 class="card-title">Job Announcements Over Time</h3>
+                    <div class="card-section">
+                        <div class="card-section-label">Variables</div>
+                        <div class="variables-list">
+                            <span class="variable-tag">Department</span>
+                            <span class="variable-tag">Agency</span>
+                            <span class="variable-tag">Occupational Series</span>
+                            <span class="variable-tag">Fiscal Year Range</span>
+                        </div>
+                    </div>
+                    <div class="card-section">
+                        <div class="card-section-label">Example Questions</div>
+                        <ul class="questions-list">
+                            <li>How has federal hiring activity changed over time?</li>
+                            <li>Is the government expanding or contracting recruitment efforts?</li>
+                        </ul>
+                    </div>
+                    <a href="https://data.opm.gov/explore-data/analytics/federal-recruitment" target="_blank" class="card-link">View Visualization &rarr;</a>
+                </article>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: Data Catalog -->
+    <div id="data-catalog" class="tab-content">
+        <div class="data-catalog-container">
+            <section class="overview">
+                <div class="stat-card employment">
+                    <h3>Employment Records</h3>
+                    <div class="value">24.4M</div>
+                    <div class="detail">Total rows across 11 monthly snapshots</div>
+                </div>
+                <div class="stat-card accessions">
+                    <h3>Accession Records</h3>
+                    <div class="value">118K</div>
+                    <div class="detail">New hires and transfers into federal service</div>
+                </div>
+                <div class="stat-card separations">
+                    <h3>Separation Records</h3>
+                    <div class="value">335K</div>
+                    <div class="detail">Resignations, retirements, and departures</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Data Format</h3>
+                    <div class="value">CSV</div>
+                    <div class="detail">Pipe-delimited (|) with headers</div>
+                </div>
+            </section>
+
+            <!-- EMPLOYMENT DATA -->
+            <section class="data-type-section-full">
+                <div class="section-header-full employment">
+                    <h2><span class="icon-full">&#128100;</span> Federal Employment Raw Data</h2>
+                    <p>EHRI Status dataset - Monthly snapshots of all active federal employees (in pay or non-pay status) as of the last day of each month.</p>
+                </div>
+                <div class="section-content-full">
+                    <div class="info-grid-full">
+                        <div class="info-item-full">
+                            <label>Files</label>
+                            <div class="value">11 monthly files</div>
+                        </div>
+                        <div class="info-item-full">
+                            <label>Rows per File</label>
+                            <div class="value">~2.1-2.3M</div>
+                        </div>
+                        <div class="info-item-full">
+                            <label>Columns</label>
+                            <div class="value">31</div>
+                        </div>
+                        <div class="info-item-full">
+                            <label>File Size</label>
+                            <div class="value">780-860 MB each</div>
+                        </div>
+                    </div>
+
+                    <div class="special-fields">
+                        <h4>&#9888; Important: Large File Warning</h4>
+                        <p>These files exceed 2 million rows and will exceed the row limit for most spreadsheet tools (e.g., MS Excel). Download files and use Python, R, or database tools to process.</p>
+                    </div>
+
+                    <h3 class="section-subheader">Age Distribution (Sample: 500K records)</h3>
+                    <div class="distribution-chart">
+                        <div class="bar-chart-full">
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">40-44</span>
+                                <div class="bar-container-full"><div class="bar-fill-full employment" style="width: 100%">71,513</div></div>
+                                <span class="bar-value-full">14.3%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">45-49</span>
+                                <div class="bar-container-full"><div class="bar-fill-full employment" style="width: 91.8%">65,635</div></div>
+                                <span class="bar-value-full">13.1%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">50-54</span>
+                                <div class="bar-container-full"><div class="bar-fill-full employment" style="width: 90.2%">64,510</div></div>
+                                <span class="bar-value-full">12.9%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">35-39</span>
+                                <div class="bar-container-full"><div class="bar-fill-full employment" style="width: 88.7%">63,413</div></div>
+                                <span class="bar-value-full">12.7%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">55-59</span>
+                                <div class="bar-container-full"><div class="bar-fill-full employment" style="width: 87.2%">62,365</div></div>
+                                <span class="bar-value-full">12.5%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">30-34</span>
+                                <div class="bar-container-full"><div class="bar-fill-full employment" style="width: 71.2%">50,925</div></div>
+                                <span class="bar-value-full">10.2%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">60-64</span>
+                                <div class="bar-container-full"><div class="bar-fill-full employment" style="width: 63.6%">45,483</div></div>
+                                <span class="bar-value-full">9.1%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">25-29</span>
+                                <div class="bar-container-full"><div class="bar-fill-full employment" style="width: 50.2%">35,902</div></div>
+                                <span class="bar-value-full">7.2%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">65+</span>
+                                <div class="bar-container-full"><div class="bar-fill-full employment" style="width: 35.8%">25,616</div></div>
+                                <span class="bar-value-full">5.1%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">20-24</span>
+                                <div class="bar-container-full"><div class="bar-fill-full employment" style="width: 19.6%">14,040</div></div>
+                                <span class="bar-value-full">2.8%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="section-subheader">Top 10 Agencies</h3>
+                    <div class="distribution-chart">
+                        <div class="bar-chart-full">
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">Veterans Affairs</span>
+                                <div class="bar-container-full"><div class="bar-fill-full employment" style="width: 100%">83,614</div></div>
+                                <span class="bar-value-full">16.7%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">Homeland Security</span>
+                                <div class="bar-container-full"><div class="bar-fill-full employment" style="width: 87.7%">73,367</div></div>
+                                <span class="bar-value-full">14.7%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">Air Force</span>
+                                <div class="bar-container-full"><div class="bar-fill-full employment" style="width: 67.2%">56,153</div></div>
+                                <span class="bar-value-full">11.2%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">Army</span>
+                                <div class="bar-container-full"><div class="bar-fill-full employment" style="width: 53.8%">45,019</div></div>
+                                <span class="bar-value-full">9.0%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">Navy</span>
+                                <div class="bar-container-full"><div class="bar-fill-full employment" style="width: 47.0%">39,259</div></div>
+                                <span class="bar-value-full">7.9%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">DOD (Other)</span>
+                                <div class="bar-container-full"><div class="bar-fill-full employment" style="width: 38.6%">32,265</div></div>
+                                <span class="bar-value-full">6.5%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">Agriculture</span>
+                                <div class="bar-container-full"><div class="bar-fill-full employment" style="width: 34.6%">28,937</div></div>
+                                <span class="bar-value-full">5.8%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">HHS</span>
+                                <div class="bar-container-full"><div class="bar-fill-full employment" style="width: 32.6%">27,297</div></div>
+                                <span class="bar-value-full">5.5%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">Interior</span>
+                                <div class="bar-container-full"><div class="bar-fill-full employment" style="width: 24.2%">20,265</div></div>
+                                <span class="bar-value-full">4.1%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">Treasury</span>
+                                <div class="bar-container-full"><div class="bar-fill-full employment" style="width: 19.1%">15,990</div></div>
+                                <span class="bar-value-full">3.2%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="section-subheader">Column Reference</h3>
+                    <div style="overflow-x: auto;">
+                    <table class="columns-table-full">
+                        <thead>
+                            <tr>
+                                <th>Column Name</th>
+                                <th>Type</th>
+                                <th>Nulls</th>
+                                <th>Unique</th>
+                                <th>Description / Sample Values</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="col-name-full">snapshot_yyyymm</td>
+                                <td><span class="dtype-badge-full dtype-int64-full">int64</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>1</td>
+                                <td>Month of snapshot (e.g., 202501). Unique identifier for temporal analysis.</td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">agency</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0.01%</td>
+                                <td>62</td>
+                                <td>Parent agency name. <div class="values-preview-full"><code>DEPARTMENT OF DEFENSE</code> <code>DEPARTMENT OF VETERANS AFFAIRS</code></div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">agency_code</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>62</td>
+                                <td>2-letter agency code. <div class="values-preview-full"><code>DD</code> <code>VA</code> <code>HS</code> <code>AR</code> <code>AF</code></div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">agency_subelement</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>331</td>
+                                <td>Sub-agency or bureau name within parent agency.</td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">agency_subelement_code</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0.01%</td>
+                                <td>346</td>
+                                <td>4-character sub-agency code. <div class="values-preview-full"><code>DD16</code> <code>ARCE</code> <code>VATA</code></div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">age_bracket</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>11</td>
+                                <td>Age range. <div class="values-preview-full"><code>20-24</code> <code>25-29</code> ... <code>65 OR MORE</code> <code>LESS THAN 20</code></div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">annualized_adjusted_basic_pay</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0.01%</td>
+                                <td>5,635</td>
+                                <td>Annual salary. Contains <code>REDACTED</code> for sensitive records. Values like <code>99036</code>, <code>168792</code></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">appointment_type</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>17</td>
+                                <td>Employment classification. <div class="values-preview-full"><code>CAREER (COMPETITIVE SERVICE PERMANENT)</code> <code>CAREER-CONDITIONAL</code></div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">appointment_type_code</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>17</td>
+                                <td>2-digit appointment code. <div class="values-preview-full"><code>10</code> <code>15</code> <code>38</code> <code>*</code> (invalid)</div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">count</td>
+                                <td><span class="dtype-badge-full dtype-int64-full">int64</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>1</td>
+                                <td>Always <code>1</code>. Each row represents one employee record.</td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">duty_station_country</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>3</td>
+                                <td><div class="values-preview-full"><code>UNITED STATES</code> <code>REDACTED</code> <code>INVALID</code></div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">duty_station_country_code</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>3</td>
+                                <td><div class="values-preview-full"><code>US</code> <code>REDACTED</code> <code>*</code></div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">duty_station_state</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>33</td>
+                                <td>State name. ~48% <code>REDACTED</code> for privacy. <div class="values-preview-full"><code>MARYLAND</code> <code>VIRGINIA</code> <code>TEXAS</code></div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">duty_station_state_abbreviation</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>33</td>
+                                <td>State abbreviation. <div class="values-preview-full"><code>MD</code> <code>VA</code> <code>DC</code> <code>REDACTED</code></div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">duty_station_state_code</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>33</td>
+                                <td>FIPS state code. <div class="values-preview-full"><code>11</code> (DC) <code>24</code> (MD) <code>51</code> (VA)</div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">education_level</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>24</td>
+                                <td><div class="values-preview-full"><code>HIGH SCHOOL GRADUATE</code> <code>BACHELOR'S DEGREE</code> <code>MASTER'S DEGREE</code> <code>DOCTORATE DEGREE</code></div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">education_level_code</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0.03%</td>
+                                <td>23</td>
+                                <td>2-digit education code. <div class="values-preview-full"><code>04</code> <code>13</code> <code>17</code> <code>21</code></div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">grade</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>123</td>
+                                <td>Pay grade. <div class="values-preview-full"><code>01</code>-<code>15</code> (GS) <code>00</code> <code>F</code> (varies by pay plan)</div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">length_of_service_years</td>
+                                <td><span class="dtype-badge-full dtype-float64-full">float64</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>552</td>
+                                <td>Federal service tenure in years. Range: 0.0 - 72.5, Mean: 11.94</td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">occupational_group</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>58</td>
+                                <td><div class="values-preview-full"><code>MEDICAL, HOSPITAL, DENTAL, AND PUBLIC HEALTH GROUP</code> <code>INFORMATION TECHNOLOGY GROUP</code></div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">occupational_group_code</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>59</td>
+                                <td>2-digit group code. <div class="values-preview-full"><code>06</code> <code>22</code> <code>03</code></div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">occupational_series</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>511</td>
+                                <td>Specific job series. <div class="values-preview-full"><code>NURSE</code> <code>CONTRACTING</code> <code>INFORMATION TECHNOLOGY MANAGEMENT</code></div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">occupational_series_code</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>511</td>
+                                <td>4-digit OPM series code. <div class="values-preview-full"><code>0610</code> (Nurse) <code>2210</code> (IT) <code>1102</code> (Contracting)</div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">pay_plan</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>95</td>
+                                <td><div class="values-preview-full"><code>GENERAL SCHEDULE</code> <code>FEDERAL WAGE SYSTEM</code> <code>SENIOR EXECUTIVE SERVICE</code></div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">pay_plan_code</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0.03%</td>
+                                <td>95</td>
+                                <td>2-character pay plan code. <div class="values-preview-full"><code>GS</code> <code>WG</code> <code>ES</code> <code>SV</code></div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">stem_occupation</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>4</td>
+                                <td><div class="values-preview-full"><code>ALL OTHER OCCUPATIONS</code> (72.8%) <code>STEM OCCUPATIONS</code> (18.4%) <code>HEALTH OCCUPATIONS</code> (8.7%)</div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">stem_occupation_type</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>7</td>
+                                <td><div class="values-preview-full"><code>ENGINEERING OCCUPATIONS</code> <code>TECHNOLOGY OCCUPATIONS</code> <code>SCIENCE OCCUPATIONS</code> <code>MATHEMATICS OCCUPATIONS</code></div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">supervisory_status</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>6</td>
+                                <td><div class="values-preview-full"><code>ALL OTHER POSITIONS</code> (84%) <code>SUPERVISOR OR MANAGER</code> (11.7%) <code>LEADER</code> <code>TEAM LEADER</code></div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">supervisory_status_code</td>
+                                <td><span class="dtype-badge-full dtype-int64-full">int64</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>6</td>
+                                <td>Values: 2 (Supervisor/Mgr), 4-8. Mean: 7.21</td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">work_schedule</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>8</td>
+                                <td><div class="values-preview-full"><code>FULL-TIME</code> (95.4%) <code>PART-TIME</code> <code>INTERMITTENT</code> <code>SEASONAL</code></div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">work_schedule_code</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>8</td>
+                                <td><div class="values-preview-full"><code>F</code> (Full-time) <code>P</code> (Part-time) <code>I</code> (Intermittent) <code>G</code> <code>S</code></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ACCESSIONS DATA -->
+            <section class="data-type-section-full">
+                <div class="section-header-full accessions">
+                    <h2><span class="icon-full">&#10133;</span> Federal Accessions Raw Data</h2>
+                    <p>EHRI Dynamics dataset - Personnel actions for individuals entering federal civilian employment, including new hires and transfers.</p>
+                </div>
+                <div class="section-content-full">
+                    <div class="info-grid-full">
+                        <div class="info-item-full">
+                            <label>Files</label>
+                            <div class="value">11 monthly files</div>
+                        </div>
+                        <div class="info-item-full">
+                            <label>Total Rows</label>
+                            <div class="value">118,015</div>
+                        </div>
+                        <div class="info-item-full">
+                            <label>Columns</label>
+                            <div class="value">33</div>
+                        </div>
+                        <div class="info-item-full">
+                            <label>File Size</label>
+                            <div class="value">2-10 MB each</div>
+                        </div>
+                    </div>
+
+                    <h3 class="section-subheader">Accession Categories</h3>
+                    <div class="distribution-chart">
+                        <div class="bar-chart-full">
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">New Hire - Competitive</span>
+                                <div class="bar-container-full"><div class="bar-fill-full accessions" style="width: 100%">12,000</div></div>
+                                <span class="bar-value-full">52.9%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">New Hire - Excepted</span>
+                                <div class="bar-container-full"><div class="bar-fill-full accessions" style="width: 76.1%">9,137</div></div>
+                                <span class="bar-value-full">40.3%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">Transfer In</span>
+                                <div class="bar-container-full"><div class="bar-fill-full accessions" style="width: 10.8%">1,301</div></div>
+                                <span class="bar-value-full">5.7%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">New Hire - SES</span>
+                                <div class="bar-container-full"><div class="bar-fill-full accessions" style="width: 2.0%">243</div></div>
+                                <span class="bar-value-full">1.1%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="section-subheader">New Hire Age Distribution (Jan 2025)</h3>
+                    <div class="distribution-chart">
+                        <div class="bar-chart-full">
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">25-29</span>
+                                <div class="bar-container-full"><div class="bar-fill-full accessions" style="width: 100%">3,625</div></div>
+                                <span class="bar-value-full">16.0%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">30-34</span>
+                                <div class="bar-container-full"><div class="bar-fill-full accessions" style="width: 98.6%">3,575</div></div>
+                                <span class="bar-value-full">15.8%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">35-39</span>
+                                <div class="bar-container-full"><div class="bar-fill-full accessions" style="width: 88.8%">3,219</div></div>
+                                <span class="bar-value-full">14.2%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">40-44</span>
+                                <div class="bar-container-full"><div class="bar-fill-full accessions" style="width: 79.4%">2,878</div></div>
+                                <span class="bar-value-full">12.7%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">20-24</span>
+                                <div class="bar-container-full"><div class="bar-fill-full accessions" style="width: 74.8%">2,710</div></div>
+                                <span class="bar-value-full">11.9%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">45-49</span>
+                                <div class="bar-container-full"><div class="bar-fill-full accessions" style="width: 61.3%">2,222</div></div>
+                                <span class="bar-value-full">9.8%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">50-54</span>
+                                <div class="bar-container-full"><div class="bar-fill-full accessions" style="width: 50.4%">1,827</div></div>
+                                <span class="bar-value-full">8.1%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">55-59</span>
+                                <div class="bar-container-full"><div class="bar-fill-full accessions" style="width: 35.8%">1,298</div></div>
+                                <span class="bar-value-full">5.7%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="section-subheader">Unique Columns (vs Employment)</h3>
+                    <div style="overflow-x: auto;">
+                    <table class="columns-table-full">
+                        <thead>
+                            <tr>
+                                <th>Column Name</th>
+                                <th>Type</th>
+                                <th>Nulls</th>
+                                <th>Unique</th>
+                                <th>Description / Values</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="col-name-full">accession_category</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>4</td>
+                                <td>Type of entry. <div class="values-preview-full"><code>NEW HIRE - COMPETITIVE SERVICE APPOINTMENT</code> <code>NEW HIRE - EXCEPTED SERVICE APPOINTMENT</code> <code>TRANSFER IN - INDIVIDUAL TRANSFER</code> <code>NEW HIRE - SENIOR EXECUTIVE SERVICE (SES) APPT</code></div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">accession_category_code</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>4</td>
+                                <td><div class="values-preview-full"><code>AA</code> (Competitive) <code>AC</code> (Excepted) <code>AD</code> (SES) <code>AE</code> (Transfer)</div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">personnel_action_effective_date_yyyymm</td>
+                                <td><span class="dtype-badge-full dtype-int64-full">int64</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>2+</td>
+                                <td>Month when personnel action took effect. <div class="values-preview-full"><code>202501</code> <code>202301</code> (some historical)</div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+
+                    <div class="notes-full">
+                        <h4>Shared Columns</h4>
+                        <ul>
+                            <li>All Employment columns except <code>snapshot_yyyymm</code> are present</li>
+                            <li>Uses <code>personnel_action_effective_date_yyyymm</code> instead of <code>snapshot_yyyymm</code></li>
+                            <li>94 unique agencies (vs 62 in Employment) - more granular agency data</li>
+                            <li>Mean length of service: 7.22 years (includes rehires and transfers)</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEPARATIONS DATA -->
+            <section class="data-type-section-full">
+                <div class="section-header-full separations">
+                    <h2><span class="icon-full">&#10134;</span> Federal Separations Raw Data</h2>
+                    <p>EHRI Dynamics dataset - Personnel actions for individuals leaving federal civilian employment, including resignations, retirements, and other separations.</p>
+                </div>
+                <div class="section-content-full">
+                    <div class="info-grid-full">
+                        <div class="info-item-full">
+                            <label>Files</label>
+                            <div class="value">11 monthly files</div>
+                        </div>
+                        <div class="info-item-full">
+                            <label>Total Rows</label>
+                            <div class="value">335,192</div>
+                        </div>
+                        <div class="info-item-full">
+                            <label>Columns</label>
+                            <div class="value">33</div>
+                        </div>
+                        <div class="info-item-full">
+                            <label>File Size</label>
+                            <div class="value">6-48 MB each</div>
+                        </div>
+                    </div>
+
+                    <div class="special-fields">
+                        <h4>&#128200; Notable: September 2025 Spike</h4>
+                        <p>September 2025 shows 125,589 separations (vs typical ~20K/month), suggesting a significant workforce reduction event or policy change. Contains 48.4 MB of data compared to typical 8-10 MB files.</p>
+                    </div>
+
+                    <h3 class="section-subheader">Separation Categories (Jan 2025)</h3>
+                    <div class="distribution-chart">
+                        <div class="bar-chart-full">
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">Quit (Resignation)</span>
+                                <div class="bar-container-full"><div class="bar-fill-full separations" style="width: 100%">9,148</div></div>
+                                <span class="bar-value-full">41.0%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">Retirement - Voluntary</span>
+                                <div class="bar-container-full"><div class="bar-fill-full separations" style="width: 71.6%">6,549</div></div>
+                                <span class="bar-value-full">29.4%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">Transfer Out</span>
+                                <div class="bar-container-full"><div class="bar-fill-full separations" style="width: 33.1%">3,032</div></div>
+                                <span class="bar-value-full">13.6%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">Termination (Expired/Other)</span>
+                                <div class="bar-container-full"><div class="bar-fill-full separations" style="width: 20.3%">1,858</div></div>
+                                <span class="bar-value-full">8.3%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">Other Separation</span>
+                                <div class="bar-container-full"><div class="bar-fill-full separations" style="width: 15.1%">1,377</div></div>
+                                <span class="bar-value-full">6.2%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">Retirement - Other</span>
+                                <div class="bar-container-full"><div class="bar-fill-full separations" style="width: 3.3%">303</div></div>
+                                <span class="bar-value-full">1.4%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">Retirement - Early Out</span>
+                                <div class="bar-container-full"><div class="bar-fill-full separations" style="width: 0.3%">24</div></div>
+                                <span class="bar-value-full">0.1%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">RIF</span>
+                                <div class="bar-container-full"><div class="bar-fill-full separations" style="width: 0.01%">1</div></div>
+                                <span class="bar-value-full">&lt;0.01%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="section-subheader">Separation Age Distribution (Jan 2025)</h3>
+                    <div class="distribution-chart">
+                        <div class="bar-chart-full">
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">65+</span>
+                                <div class="bar-container-full"><div class="bar-fill-full separations" style="width: 100%">3,774</div></div>
+                                <span class="bar-value-full">16.9%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">60-64</span>
+                                <div class="bar-container-full"><div class="bar-fill-full separations" style="width: 91.1%">3,438</div></div>
+                                <span class="bar-value-full">15.4%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">55-59</span>
+                                <div class="bar-container-full"><div class="bar-fill-full separations" style="width: 59.8%">2,258</div></div>
+                                <span class="bar-value-full">10.1%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">35-39</span>
+                                <div class="bar-container-full"><div class="bar-fill-full separations" style="width: 59.6%">2,251</div></div>
+                                <span class="bar-value-full">10.1%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">40-44</span>
+                                <div class="bar-container-full"><div class="bar-fill-full separations" style="width: 57.3%">2,163</div></div>
+                                <span class="bar-value-full">9.7%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">30-34</span>
+                                <div class="bar-container-full"><div class="bar-fill-full separations" style="width: 55.6%">2,099</div></div>
+                                <span class="bar-value-full">9.4%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">25-29</span>
+                                <div class="bar-container-full"><div class="bar-fill-full separations" style="width: 47.5%">1,792</div></div>
+                                <span class="bar-value-full">8.0%</span>
+                            </div>
+                            <div class="bar-row-full">
+                                <span class="bar-label-full">50-54</span>
+                                <div class="bar-container-full"><div class="bar-fill-full separations" style="width: 45.3%">1,711</div></div>
+                                <span class="bar-value-full">7.7%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="section-subheader">Unique Columns (vs Employment)</h3>
+                    <div style="overflow-x: auto;">
+                    <table class="columns-table-full">
+                        <thead>
+                            <tr>
+                                <th>Column Name</th>
+                                <th>Type</th>
+                                <th>Nulls</th>
+                                <th>Unique</th>
+                                <th>Description / Values</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="col-name-full">separation_category</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>9</td>
+                                <td>Type of departure. <div class="values-preview-full"><code>QUIT</code> <code>RETIREMENT - VOLUNTARY</code> <code>TRANSFER OUT - INDIVIDUAL TRANSFER</code> <code>TERMINATION (EXPIRED APPT/OTHER)</code> <code>REDUCTION IN FORCE (RIF)</code></div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">separation_category_code</td>
+                                <td><span class="dtype-badge-full dtype-object-full">string</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>9</td>
+                                <td><div class="values-preview-full"><code>SA</code> (Other) <code>SB</code> (Quit) <code>SC</code> (RIF) <code>SD</code> (Early Out) <code>SE</code> (Other Retire) <code>SG</code> (Voluntary Retire) <code>SH</code> (Termination) <code>SJ</code> (Transfer) <code>SL</code> (Mass Transfer)</div></td>
+                            </tr>
+                            <tr>
+                                <td class="col-name-full">personnel_action_effective_date_yyyymm</td>
+                                <td><span class="dtype-badge-full dtype-int64-full">int64</span></td>
+                                <td class="null-low-full">0%</td>
+                                <td>2+</td>
+                                <td>Month when separation took effect.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+
+                    <h3 class="section-subheader">Data Quality Notes - Separations</h3>
+                    <div class="notes-full">
+                        <h4>Higher Null Rates</h4>
+                        <ul>
+                            <li><code>annualized_adjusted_basic_pay</code>: 3.32% nulls (vs &lt;1% in Employment)</li>
+                            <li><code>grade</code>: 1.83% nulls</li>
+                            <li><code>occupational_series_code</code>: 1.82% nulls</li>
+                            <li><code>pay_plan_code</code>: 1.91% nulls</li>
+                            <li><code>work_schedule_code</code>: 1.82% nulls</li>
+                            <li>Mean length of service: 18.54 years (higher due to retirements)</li>
+                            <li>Includes international duty stations: France, Japan, Mexico, India, etc.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- COMMON NOTES -->
+            <section class="data-type-section-full">
+                <div class="section-header-full" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(168, 85, 247, 0.05) 100%);">
+                    <h2><span class="icon-full" style="background: #a855f7; color: white;">&#128218;</span> Data Quality & Privacy Notes</h2>
+                </div>
+                <div class="section-content-full">
+                    <h3 class="section-subheader">Privacy Redaction</h3>
+                    <ul style="padding-left: 1.5rem; margin-bottom: 1.5rem; color: var(--text-muted);">
+                        <li><strong>REDACTED</strong> values appear in location fields (duty_station_*) and salary for sensitive records</li>
+                        <li>~48% of duty station state data is redacted in Employment files</li>
+                        <li>Salary redaction more common in Accessions (0.57%) and Separations (3.32%)</li>
+                    </ul>
+
+                    <h3 class="section-subheader">Invalid/Missing Data Markers</h3>
+                    <ul style="padding-left: 1.5rem; margin-bottom: 1.5rem; color: var(--text-muted);">
+                        <li><code>INVALID</code> - Data validation failed</li>
+                        <li><code>*</code> - Invalid code value</li>
+                        <li><code>NO DATA REPORTED</code> - Missing submission</li>
+                        <li><code>UNSPECIFIED</code> - Not categorized</li>
+                    </ul>
+
+                    <h3 class="section-subheader">File Naming Convention</h3>
+                    <code style="background: rgba(0, 0, 0, 0.3); padding: 0.5rem 1rem; border-radius: 4px; display: inline-block; color: var(--text);">
+                        {type}_{yyyymm}_{version}_{download_date}.csv
+                    </code>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">
+                        Example: <code>employment_202501_1_2026-01-08.csv</code>
+                    </p>
+
+                    <h3 class="section-subheader">Recommended Analysis Tools</h3>
+                    <ul style="padding-left: 1.5rem; color: var(--text-muted);">
+                        <li><strong>Python</strong>: pandas, polars, dask for large file handling</li>
+                        <li><strong>R</strong>: data.table, arrow for efficient CSV reading</li>
+                        <li><strong>SQL</strong>: Load into SQLite, DuckDB, or PostgreSQL for queries</li>
+                        <li><strong>BI Tools</strong>: Tableau, Power BI (may need data sampling for Employment files)</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- TAB 3: Additional Variables -->
+    <div id="unused-variables" class="tab-content">
+        <div class="page-container">
+            <div class="alert alert-info" style="margin-bottom: 2rem;">
+                <h4>Variables Available for Custom Analysis</h4>
+                <p>These data fields are present in the EHRI raw data files but are not currently featured in the OPM visualization catalog. They represent opportunities for additional analysis and custom visualizations.</p>
+            </div>
+
+            <!-- STEM Occupations -->
+            <div class="section-header">
+                <div class="icon" style="background: var(--accent-purple);">🔬</div>
+                <h2>STEM Classification Fields</h2>
+                <span class="count">2 variables</span>
+            </div>
+
+            <div class="unused-var-card">
+                <h3><code>stem_occupation</code> - STEM Occupation Category</h3>
+                <p class="description">High-level classification of whether a position is categorized as STEM, Health, or other occupation types. Useful for analyzing the federal government's science and technology workforce.</p>
+                <div class="sample-values">
+                    <h4>All Values</h4>
+                    <div class="variables-list">
+                        <span class="variable-tag">ALL OTHER OCCUPATIONS (72.8%)</span>
+                        <span class="variable-tag">STEM OCCUPATIONS (18.4%)</span>
+                        <span class="variable-tag">HEALTH OCCUPATIONS (8.7%)</span>
+                        <span class="variable-tag">UNSPECIFIED</span>
+                    </div>
+                </div>
+                <div class="potential-uses">
+                    <h4>Potential Analysis Questions</h4>
+                    <ul>
+                        <li>Which agencies have the highest concentration of STEM workers?</li>
+                        <li>How has STEM employment changed over time across the federal government?</li>
+                        <li>What is the separation rate for STEM vs non-STEM positions?</li>
+                        <li>Are STEM positions more likely to be filled by new hires or transfers?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="unused-var-card">
+                <h3><code>stem_occupation_type</code> - Detailed STEM Category</h3>
+                <p class="description">More granular breakdown of STEM occupations into specific disciplines. Enables analysis of engineering, technology, science, and math workforce segments.</p>
+                <div class="sample-values">
+                    <h4>All Values</h4>
+                    <div class="variables-list">
+                        <span class="variable-tag">ALL OTHER OCCUPATIONS</span>
+                        <span class="variable-tag">ENGINEERING OCCUPATIONS</span>
+                        <span class="variable-tag">TECHNOLOGY OCCUPATIONS</span>
+                        <span class="variable-tag">SCIENCE OCCUPATIONS</span>
+                        <span class="variable-tag">MATHEMATICS OCCUPATIONS</span>
+                        <span class="variable-tag">HEALTH OCCUPATIONS</span>
+                        <span class="variable-tag">UNSPECIFIED</span>
+                    </div>
+                </div>
+                <div class="potential-uses">
+                    <h4>Potential Analysis Questions</h4>
+                    <ul>
+                        <li>Which STEM discipline has the highest representation in federal employment?</li>
+                        <li>How do salaries compare across STEM disciplines?</li>
+                        <li>What is the age distribution within each STEM category?</li>
+                        <li>Which agencies are actively recruiting for specific STEM disciplines?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Supervisory Status -->
+            <div class="section-header">
+                <div class="icon" style="background: var(--accent-orange);">👔</div>
+                <h2>Supervisory Status Fields</h2>
+                <span class="count">2 variables</span>
+            </div>
+
+            <div class="unused-var-card">
+                <h3><code>supervisory_status</code> - Supervisory Classification</h3>
+                <p class="description">Indicates whether an employee holds a supervisory, managerial, team leader, or non-supervisory position. Critical for understanding organizational structure and leadership distribution.</p>
+                <div class="sample-values">
+                    <h4>All Values</h4>
+                    <div class="variables-list">
+                        <span class="variable-tag">ALL OTHER POSITIONS (84%)</span>
+                        <span class="variable-tag">SUPERVISOR OR MANAGER (11.7%)</span>
+                        <span class="variable-tag">TEAM LEADER</span>
+                        <span class="variable-tag">LEADER</span>
+                        <span class="variable-tag">SUPERVISOR (CSRA)</span>
+                        <span class="variable-tag">MANAGEMENT OFFICIAL (CSRA)</span>
+                    </div>
+                </div>
+                <div class="potential-uses">
+                    <h4>Potential Analysis Questions</h4>
+                    <ul>
+                        <li>What is the supervisor-to-employee ratio across agencies?</li>
+                        <li>How does supervisory status correlate with salary and grade?</li>
+                        <li>Are supervisors more or less likely to separate than non-supervisors?</li>
+                        <li>How has the management layer changed over time?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="unused-var-card">
+                <h3><code>supervisory_status_code</code> - Supervisory Code</h3>
+                <p class="description">Numeric code representation of supervisory status. Values range from 2-8, with mean of 7.21 indicating most employees are non-supervisory.</p>
+                <div class="sample-values">
+                    <h4>Values</h4>
+                    <div class="variables-list">
+                        <span class="variable-tag">2 (Supervisor/Mgr)</span>
+                        <span class="variable-tag">4</span>
+                        <span class="variable-tag">5</span>
+                        <span class="variable-tag">6</span>
+                        <span class="variable-tag">7</span>
+                        <span class="variable-tag">8 (Non-supervisory)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Work Schedule -->
+            <div class="section-header">
+                <div class="icon" style="background: var(--accent-cyan);">⏰</div>
+                <h2>Work Schedule Fields</h2>
+                <span class="count">2 variables</span>
+            </div>
+
+            <div class="unused-var-card">
+                <h3><code>work_schedule</code> - Work Schedule Type</h3>
+                <p class="description">Describes the employee's work arrangement including full-time, part-time, intermittent, and seasonal designations. Important for workforce planning and utilization analysis.</p>
+                <div class="sample-values">
+                    <h4>Values (Employment Data)</h4>
+                    <div class="variables-list">
+                        <span class="variable-tag">FULL-TIME (95.4%)</span>
+                        <span class="variable-tag">PART-TIME</span>
+                        <span class="variable-tag">INTERMITTENT</span>
+                        <span class="variable-tag">FULL-TIME SEASONAL</span>
+                        <span class="variable-tag">PART-TIME SEASONAL</span>
+                        <span class="variable-tag">INTERMITTENT SEASONAL</span>
+                        <span class="variable-tag">PART-TIME JOB SHARER</span>
+                        <span class="variable-tag">PHASED RETIREMENT</span>
+                    </div>
+                </div>
+                <div class="potential-uses">
+                    <h4>Potential Analysis Questions</h4>
+                    <ul>
+                        <li>Which agencies rely most heavily on part-time or seasonal workers?</li>
+                        <li>How does work schedule affect separation rates?</li>
+                        <li>What occupational series have the highest proportion of intermittent workers?</li>
+                        <li>How many employees are using phased retirement options?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="unused-var-card">
+                <h3><code>work_schedule_code</code> - Work Schedule Code</h3>
+                <p class="description">Single-letter code for work schedule type.</p>
+                <div class="sample-values">
+                    <h4>Values</h4>
+                    <div class="variables-list">
+                        <span class="variable-tag">F - Full-time</span>
+                        <span class="variable-tag">P - Part-time</span>
+                        <span class="variable-tag">I - Intermittent</span>
+                        <span class="variable-tag">G - Full-time Seasonal</span>
+                        <span class="variable-tag">S - Part-time Seasonal</span>
+                        <span class="variable-tag">J - Intermittent Seasonal</span>
+                        <span class="variable-tag">Q - Part-time Job Sharer</span>
+                        <span class="variable-tag">R - Phased Retirement</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Length of Service -->
+            <div class="section-header">
+                <div class="icon" style="background: #22d3ee;">📅</div>
+                <h2>Tenure Fields</h2>
+                <span class="count">1 variable</span>
+            </div>
+
+            <div class="unused-var-card">
+                <h3><code>length_of_service_years</code> - Federal Service Tenure</h3>
+                <p class="description">Continuous numeric field representing years of federal service. Ranges from 0 to 72.5 years with mean of 11.94 years for current employees. Separations show higher mean (18.54 years) due to retirements.</p>
+                <div class="sample-values">
+                    <h4>Statistics</h4>
+                    <div class="variables-list">
+                        <span class="variable-tag">Min: 0.0 years</span>
+                        <span class="variable-tag">Max: 72.5 years</span>
+                        <span class="variable-tag">Mean (Employment): 11.94</span>
+                        <span class="variable-tag">Mean (Accessions): 7.22</span>
+                        <span class="variable-tag">Mean (Separations): 18.54</span>
+                    </div>
+                </div>
+                <div class="potential-uses">
+                    <h4>Potential Analysis Questions</h4>
+                    <ul>
+                        <li>What is the average tenure by agency or occupational series?</li>
+                        <li>How does tenure correlate with grade level and salary?</li>
+                        <li>At what tenure length do employees most commonly separate?</li>
+                        <li>Which agencies have the most experienced workforce?</li>
+                        <li>How does new hire tenure (prior federal service) vary by accession type?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Accession/Separation Categories -->
+            <div class="section-header">
+                <div class="icon" style="background: #f472b6;">🔄</div>
+                <h2>Dynamics-Specific Fields</h2>
+                <span class="count">4 variables</span>
+            </div>
+
+            <div class="unused-var-card">
+                <h3><code>accession_category</code> / <code>accession_category_code</code></h3>
+                <p class="description">Categorizes the type of entry into federal employment. Distinguishes between competitive vs excepted service appointments, SES appointments, and transfers.</p>
+                <div class="sample-values">
+                    <h4>Categories</h4>
+                    <div class="variables-list">
+                        <span class="variable-tag">AA - NEW HIRE - COMPETITIVE SERVICE</span>
+                        <span class="variable-tag">AC - NEW HIRE - EXCEPTED SERVICE</span>
+                        <span class="variable-tag">AD - NEW HIRE - SES</span>
+                        <span class="variable-tag">AE - TRANSFER IN</span>
+                    </div>
+                </div>
+                <div class="potential-uses">
+                    <h4>Potential Analysis Questions</h4>
+                    <ul>
+                        <li>What proportion of new hires come through competitive vs excepted service?</li>
+                        <li>How has the balance of hiring paths changed over time?</li>
+                        <li>Which agencies rely most on transfers vs external hiring?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="unused-var-card">
+                <h3><code>separation_category</code> / <code>separation_category_code</code></h3>
+                <p class="description">Categorizes the type of departure from federal employment. Critical for understanding workforce attrition patterns.</p>
+                <div class="sample-values">
+                    <h4>Categories</h4>
+                    <div class="variables-list">
+                        <span class="variable-tag">SB - QUIT (Resignation)</span>
+                        <span class="variable-tag">SG - RETIREMENT - VOLUNTARY</span>
+                        <span class="variable-tag">SJ - TRANSFER OUT</span>
+                        <span class="variable-tag">SH - TERMINATION</span>
+                        <span class="variable-tag">SA - OTHER SEPARATION</span>
+                        <span class="variable-tag">SE - RETIREMENT - OTHER</span>
+                        <span class="variable-tag">SD - RETIREMENT - EARLY OUT</span>
+                        <span class="variable-tag">SC - REDUCTION IN FORCE (RIF)</span>
+                        <span class="variable-tag">SL - MASS TRANSFER</span>
+                    </div>
+                </div>
+                <div class="potential-uses">
+                    <h4>Potential Analysis Questions</h4>
+                    <ul>
+                        <li>What is the breakdown of voluntary vs involuntary separations?</li>
+                        <li>How do separation reasons vary by age group?</li>
+                        <li>Which agencies have the highest resignation rates?</li>
+                        <li>How have RIF numbers changed during workforce reduction periods?</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>Data Source: Office of Personnel Management (OPM) EHRI Status and Dynamics Datasets</p>
+        <p>Portal generated January 2026</p>
+    </footer>
+
+    <script>
+        function showTab(tabId) {
+            // Hide all tab content
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.closest('.tab-btn').classList.add('active');
+        }
+    </script>
+</body>
+</html>
